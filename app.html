@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title></title>
+</head>
+
+<body>
+<p>Connect your OSC app/device at port 3333 to send messages to this
+page.<br /><br />Configure your OSC app/device to listen at port 3334
+to messages I send from this page.</p>
+
+<hr />
+
+Received from an OSC app/device at : <div id="status"></div>
+
+<hr />
+
+<script src="http://192.168.1.74:8081/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.4.4.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.js"></script>
+
+<script>
+   socket = io.connect('http://192.168.1.74', { port: 8081, rememberTransport: false});
+   console.log('oi');
+   socket.on('connect', function() {
+        // sends to socket.io server the host/port of oscServer
+        // and oscClient
+        socket.emit('config',
+            {
+                server: {
+                    port: 3333,
+                    host: '192.168.1.74'
+                },
+                client: {
+                    port: 3334,
+                    host: '192.168.1.74'
+                }
+            }
+        );
+    });
+
+    socket.on('message', function(obj) {
+        var status = document.getElementById("status");
+        status.innerHTML = obj[0];
+        console.log(obj);
+    });
+
+    var x;
+    var y;
+    var z;
+
+    $(function(){
+        window.addEventListener("devicemotion",function(evt){
+            x = Math.round(evt.accelerationIncludingGravity.x); 
+            y = Math.round(evt.accelerationIncludingGravity.y); 
+            z = Math.round(evt.accelerationIncludingGravity.z); 
+            
+            if (x == 0 && y == 0 && z == -10) {
+               // socket.emit('message', '/one');
+            }
+
+            $("#result").html("x:"+x+"<br>y:"+y+"<br>z:"+z);
+        },false);
+    });
+    mainLoop = setInterval(moveMe,100);
+
+function moveMe () {
+  socket.emit('message', x + ":" + y + ":" + z);
+
+  if ((x >= -2 && x <= 2 ) && (y >= 8  && y<=12) && (z >= -2 && z <= 2)) {
+     socket.emit('message', '/one');
+  }
+//  if (x == 5 && y == -5 && z == 7) {
+  if ((x >= 3 && x <= 7 ) && (y >= -7  && y<= -3) && (z >= 5 && z <= 9)) {
+     socket.emit('message', '/two');
+  }
+//  if (x == 1 && y == 5 && z == 8) {
+  if ((x >= -1 && x <= 3 ) && (y >= 3  && y<= 7) && (z >= 6 && z <= 10)) {
+     socket.emit('message', '/three');
+  }
+//  if (x == -5 && y == 5 && z == -7) {
+  if ((x >= -7 && x <= -3 ) && (y >= 3  && y<= 7) && (z >= -9 && z <= 5)) {
+     socket.emit('message', '/four');
+  }
+//  if (x == 5 && y == 5 && z == -7) {
+  if ((x >= 3 && x <= 7 ) && (y >= 3  && y<= 7) && (z >= -9 && z <= -5)) {
+     socket.emit('message', '/five');
+  }
+//  if (x == -8 && y == 5 && z == 3) {
+  if ((x >= -10 && x <= -6 ) && (y >= 3  && y<= 7) && (z >= 1 && z <= 5)) {
+     socket.emit('message', '/six');
+  }
+//  if (x == -5 && y == -5 && z == 7) {
+  if ((x >= -7 && x <= -3 ) && (y >= -6  && y<= -2) && (z >= 6 && z <= 10)) {
+     socket.emit('message', '/seven');
+  }
+//  if (x == 8 && y == -4 && z == -4) {
+  if ((x >= 6 && x <= 10 ) && (y >= -6  && y<= -2) && (z >=-6 && z <= -2)) {
+     socket.emit('message', '/eight');
+  }
+//  if (x == 8 && y == 5 && z == 2) {
+  if ((x >= 6 && x <= 10 ) && (y >= 3  && y<= 7) && (z >= 0 && z <= 4)) {
+     socket.emit('message', '/nine');
+  }
+//  if (x == 0 && y == -3 && z == -9) {
+  if ((x >= -2 && x <= 2 ) && (y >= -5  && y<= -1) && (z >= -11 && z <= -7)) {
+     socket.emit('message', '/ten');
+  }
+//  if (x == -8 && y == -4 && z == -3) {
+  if ((x >= -10 && x <= -6 ) && (y >= -6  && y<= -2) && (z >= -5 && z <= -1)) {
+     socket.emit('message', '/eleven');
+  }
+}
+
+</script>
+
+<output id="result"></output><br>
+<button onclick="socket.emit('message', '/foobar');">Send OSC message</button>
+
+</body> </html>
