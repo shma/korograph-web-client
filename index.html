@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title></title>
+</head>
+
+<body>
+<script src="http://192.168.1.74:8081/socket.io/socket.io.js"></script>
+<script src="jquery-1.4.4.min.js"></script>
+<script src="jquery.mobile-1.0a2.min.js"></script>
+<script>
+   var iurl = 'http://192.168.1.74';
+   socket = io.connect(iurl, { port: 8081, rememberTransport: false});
+   socket.on('connect', function() {});
+
+    socket.on('message', function(obj) {
+        var status = document.getElementById("status");
+        status.innerHTML = obj[0];
+    });
+
+    var x;
+    var y;
+    var z;
+
+    $(function(){
+        window.addEventListener("devicemotion",function(evt){
+            x = Math.round(evt.accelerationIncludingGravity.x); 
+            y = Math.round(evt.accelerationIncludingGravity.y); 
+            z = Math.round(evt.accelerationIncludingGravity.z); 
+            $("#result").html("x:"+x+"<br>y:"+y+"<br>z:"+z);
+        },false);
+    });
+    mainLoop = setInterval(moveMe,100);
+
+function moveMe () {
+  socket.emit('message', x + ":" + y + ":" + z);
+
+  if ((x >= -2 && x <= 2 ) && (y >= 8  && y<=12) && (z >= -2 && z <= 2)) {
+     socket.emit('message', '/one');
+  }
+//  if (x == -3 && y == -2 && z == -9) {
+  if ((x >= -5 && x <= -1 ) && (y >= -4  && y<= 0) && (z >= -11 && z <= -7)) {
+     socket.emit('message', '/two');
+  }
+//  if (x == 1 && y == 4 && z == -9) {
+  if ((x >= -1 && x <= 3 ) && (y >= 3  && y<= 7) && (z >= -11 && z <= -7)) {
+     socket.emit('message', '/three');
+  }
+//  if (x == 4 && y == 6 && z == 7) {
+  if ((x >= 2 && x <= 6 ) && (y >= 4  && y<= 8) && (z >= 5 && z <= 9)) {
+     socket.emit('message', '/four');
+  }
+//  if (x == -6 && y == 5 && z == 6) {
+  if ((x >= -8 && x <= -4 ) && (y >= 3  && y<= 7) && (z >= 4 && z <= 8)) {
+     socket.emit('message', '/five');
+  }
+//  if (x == 8 && y == 4 && z == -3) {
+  if ((x >= 6 && x <= 10 ) && (y >= 2  && y<= 6) && (z >= -5 && z <= -1)) {
+     socket.emit('message', '/six');
+  }
+//  if (x == 8 && y == -4 && z == -4) {
+  if ((x >= 6 && x <= 10 ) && (y >= -6  && y<= -2) && (z >= -6 && z <= -2)) {
+     socket.emit('message', '/seven');
+  }
+//  if (x == -8 && y == -4 && z == 3) {
+  if ((x >= -10 && x <= -6 ) && (y >= -6  && y<= -2) && (z >=1 && z <= 5)) {
+     socket.emit('message', '/eight');
+  }
+//  if (x == -8 && y == 4 && z == -3) {
+  if ((x >= -10 && x <= -6 ) && (y >= 2  && y<= 6) && (z >= -5 && z <= -1)) {
+     socket.emit('message', '/nine');
+  }
+//  if (x == 0 && y == -4 && z == 9) {
+  if ((x >= -2 && x <= 2 ) && (y >= -6  && y<= -2) && (z >= 7 && z <= 11)) {
+     socket.emit('message', '/ten');
+  }
+//  if (x == 8 && y == -4 && z == 3) {
+  if ((x >= 6 && x <= 10 ) && (y >= -6  && y<= -2) && (z >= 1 && z <= 5)) {
+     socket.emit('message', '/eleven');
+  }
+}
+</script>
+<output id="result"></output><br>
+</body> </html>
